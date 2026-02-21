@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #0D0D12;
+    /* Obsidian */
+    --foreground: #FAF8F5;
+    /* Ivory */
+    --primary: #0D0D12;
+    /* Obsidian */
+    --accent: #C9A84C;
+    /* Champagne */
+    --dark: #2A2A35;
+    /* Slate */
+  }
+
+  body {
+    @apply bg-background text-foreground font-heading antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Typography utilities mapped correctly */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.noise-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.05;
+  background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+}
+
+.magnetic-btn {
+  @apply relative overflow-hidden transition-transform duration-500;
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.magnetic-btn:hover {
+  transform: scale(1.03);
+}
+
+.magnetic-btn::before {
+  content: '';
+  @apply absolute top-0 -left-[100%] w-full h-full bg-white/20 transition-all duration-300 ease-in-out;
+}
+
+.magnetic-btn:hover::before {
+  @apply left-0;
+}
+
+/* Custom Cursor */
+@media (pointer: fine) {
+
+  body,
+  a,
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea {
+    cursor: none !important;
+  }
+}
+
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  background-color: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    background-color 0.3s ease,
+    mix-blend-mode 0.3s ease;
+  mix-blend-mode: difference;
+}
+
+.custom-cursor.hovering-link {
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  border: 1px solid var(--accent);
+  backdrop-filter: blur(4px);
+  mix-blend-mode: normal;
+}
+
+.custom-cursor.hovering-portfolio {
+  width: 80px;
+  height: 80px;
+  background-color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  mix-blend-mode: normal;
+}
+
+.custom-cursor.hovering-portfolio::after {
+  content: "VIEW";
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--background);
+  letter-spacing: 0.1em;
+}
+
+/* Animation Masks */
+.mask-wrapper {
+  overflow: hidden;
+  display: inline-flex;
+  vertical-align: top;
+}
+
+.mask-wrapper.block-mask {
+  display: block;
+}
+
+.tilt-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.tilt-content {
+  transform: translateZ(40px);
+}

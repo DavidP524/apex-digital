@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowRight, ChevronRight, Layout, RefreshCw, Wrench, CheckCircle } from 'lucide-react';
+import { ArrowRight, ArrowUp, ChevronRight, Layout, RefreshCw, Wrench, CheckCircle, Menu, X } from 'lucide-react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import Lenis from 'lenis';
@@ -74,9 +74,18 @@ const SectionHeading = ({ children, subtitle }) => (
 // 0. NAVBAR
 const Navbar = () => {
   const navRef = useRef(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const scrollTo = (id) => {
+    setMenuOpen(false);
+    setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // Background blur when scrolled past hero
       ScrollTrigger.create({
         start: 'top -100',
         end: 99999,
@@ -86,48 +95,168 @@ const Navbar = () => {
         }
       });
     }, navRef);
-    return () => ctx.revert();
-  }, []);
+
+    // Hide on scroll down, show on scroll up (desktop only)
+    let isHidden = false;
+    let hideTimeout = null;
+
+    const handleWheel = (e) => {
+      if (menuOpen) return; // Don't hide when mobile menu is open
+      const scrollY = window.scrollY;
+
+      if (scrollY < 200) {
+        if (isHidden) {
+          isHidden = false;
+          gsap.to(navRef.current, { y: 0, duration: 0.3, ease: 'power2.out', overwrite: true });
+        }
+        return;
+      }
+
+      if (e.deltaY > 0) {
+        if (!isHidden && !hideTimeout) {
+          hideTimeout = setTimeout(() => {
+            isHidden = true;
+            gsap.to(navRef.current, { y: -120, duration: 0.4, ease: 'power2.in', overwrite: true });
+            hideTimeout = null;
+          }, 150);
+        }
+      } else if (e.deltaY < 0) {
+        if (hideTimeout) {
+          clearTimeout(hideTimeout);
+          hideTimeout = null;
+        }
+        if (isHidden) {
+          isHidden = false;
+          gsap.to(navRef.current, { y: 0, duration: 0.3, ease: 'power2.out', overwrite: true });
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+
+    return () => {
+      ctx.revert();
+      window.removeEventListener('wheel', handleWheel);
+      if (hideTimeout) clearTimeout(hideTimeout);
+    };
+  }, [menuOpen]);
+
+  // Animate mobile menu links on open
+  useEffect(() => {
+    if (menuOpen) {
+      gsap.from('.mobile-nav-link', {
+        y: 30, opacity: 0, stagger: 0.08, duration: 0.5, ease: 'power3.out', delay: 0.1
+      });
+    }
+  }, [menuOpen]);
 
   return (
-    <nav
-      ref={navRef}
-      className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between px-8 py-4 rounded-[2rem] transition-all duration-500 w-[90%] max-w-5xl text-foreground
-      [&.nav-scrolled]:bg-background/80 [&.nav-scrolled]:backdrop-blur-xl [&.nav-scrolled]:border [&.nav-scrolled]:border-white/10 [&.nav-scrolled]:py-3"
-    >
-      <div className="font-heading font-bold text-xl tracking-tighter">Apex Digital</div>
-      <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
-        <a href="#services" className="hover:text-accent transition-colors duration-300">Services</a>
-        <a href="#process" className="hover:text-accent transition-colors duration-300">Process</a>
-        <a href="#portfolio" className="hover:text-accent transition-colors duration-300">Work</a>
-      </div>
-      <button onClick={() => { document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' }); }} className="magnetic-btn bg-accent text-background px-6 py-2.5 rounded-full font-semibold text-sm flex items-center gap-2 group cursor-pointer border-none appearance-none">
-        <span className="relative z-10">Consultation</span>
-      </button>
-    </nav>
+    <>
+      <nav
+        ref={navRef}
+        className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between px-6 md:px-8 py-4 rounded-[2rem] transition-all duration-500 w-[92%] max-w-5xl text-foreground
+        [&.nav-scrolled]:bg-background/80 [&.nav-scrolled]:backdrop-blur-xl [&.nav-scrolled]:border [&.nav-scrolled]:border-white/10 [&.nav-scrolled]:py-3"
+      >
+        <div className="font-heading font-bold text-xl tracking-tighter">Apex Digital</div>
+        <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
+          <a href="#services" onClick={(e) => { e.preventDefault(); scrollTo('services'); }} className="hover:text-accent transition-colors duration-300">Services</a>
+          <a href="#process" onClick={(e) => { e.preventDefault(); scrollTo('process'); }} className="hover:text-accent transition-colors duration-300">Process</a>
+          <a href="#portfolio" onClick={(e) => { e.preventDefault(); scrollTo('portfolio'); }} className="hover:text-accent transition-colors duration-300">Work</a>
+        </div>
+        <button onClick={() => scrollTo('cta')} className="hidden md:flex magnetic-btn bg-accent text-background px-6 py-2.5 rounded-full font-semibold text-sm items-center gap-2 group cursor-pointer border-none appearance-none">
+          <span className="relative z-10">Consultation</span>
+        </button>
+        {/* Mobile hamburger */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="md:hidden flex items-center justify-center w-10 h-10 cursor-pointer bg-transparent border-none appearance-none text-foreground"
+          aria-label="Toggle menu"
+        >
+          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </nav>
+
+      {/* Mobile full-screen menu */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl flex flex-col items-center justify-center gap-2">
+          <a href="#services" onClick={(e) => { e.preventDefault(); scrollTo('services'); }} className="mobile-nav-link font-heading text-3xl font-bold text-foreground hover:text-accent transition-colors py-4">Services</a>
+          <a href="#process" onClick={(e) => { e.preventDefault(); scrollTo('process'); }} className="mobile-nav-link font-heading text-3xl font-bold text-foreground hover:text-accent transition-colors py-4">Process</a>
+          <a href="#portfolio" onClick={(e) => { e.preventDefault(); scrollTo('portfolio'); }} className="mobile-nav-link font-heading text-3xl font-bold text-foreground hover:text-accent transition-colors py-4">Work</a>
+          <button onClick={() => scrollTo('cta')} className="mobile-nav-link magnetic-btn mt-6 bg-accent text-background px-8 py-4 rounded-full font-bold text-lg cursor-pointer border-none appearance-none">
+            Book a Consultation
+          </button>
+        </div>
+      )}
+    </>
   );
 };
 
 // 1. HERO
-const Hero = () => {
-  const containerRef = useRef(null);
-  const bgImgRef = useRef(null);
+// INTRO OVERLAY — Branded curtain reveal on page load
+const IntroOverlay = () => {
+  const overlayRef = useRef(null);
+  const textRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Entrance Animation
-      gsap.from('.hero-elem', {
-        y: '100%',
+      const tl = gsap.timeline();
+
+      // Text fades in
+      tl.from(textRef.current, {
         opacity: 0,
-        stagger: 0.15,
-        duration: 1.2,
-        ease: 'power3.out',
-        delay: 0.2
+        y: 20,
+        duration: 0.4,
+        ease: 'power2.out',
+        delay: 0.1,
+      });
+
+      // Brief hold, then curtain slides up
+      tl.to(overlayRef.current, {
+        yPercent: -100,
+        duration: 0.8,
+        ease: 'power3.inOut',
+        delay: 0.2,
+      });
+
+      // Remove from flow after animation
+      tl.set(overlayRef.current, { display: 'none' });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div
+      ref={overlayRef}
+      className="fixed inset-0 z-[9998] bg-accent flex items-center justify-center"
+    >
+      <span
+        ref={textRef}
+        className="font-data text-background text-2xl md:text-3xl font-bold tracking-[0.35em] uppercase"
+      >
+        Apex Digital
+      </span>
+    </div>
+  );
+};
+
+const Hero = () => {
+  const containerRef = useRef(null);
+  const bgImgRef = useRef(null);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Entrance Animation — entire hero content rises in as one unified block
+      gsap.from('.hero-content', {
+        y: 60,
+        opacity: 0,
+        duration: 1.6,
+        ease: 'power2.out',
+        delay: 1.0
       });
 
       // Parallax Background
       gsap.to(bgImgRef.current, {
-        yPercent: 30, // Move the image down 30% of its size while scrolling
+        yPercent: 30,
         ease: 'none',
         scrollTrigger: {
           trigger: containerRef.current,
@@ -136,12 +265,13 @@ const Hero = () => {
           scrub: true,
         }
       });
+
     }, containerRef);
     return () => ctx.revert();
   }, []);
 
   return (
-    <section ref={containerRef} className="relative w-full min-h-[100dvh] flex items-center pt-32 pb-24 px-8 md:px-16 overflow-hidden bg-background">
+    <section ref={containerRef} className="relative w-full min-h-[100dvh] flex items-center pt-24 md:pt-32 pb-24 px-8 md:px-16 overflow-hidden bg-background">
       {/* Abstract dark texture background with scaling to allow parallax space */}
       <div className="absolute inset-0 z-0 overflow-hidden bg-background">
         <img
@@ -153,35 +283,25 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
       </div>
 
-      <div className="relative z-10 flex flex-col items-start gap-6 max-w-4xl w-full">
-        <div className="mask-wrapper block-mask">
-          <div className="hero-elem inline-block font-data text-accent uppercase tracking-widest text-sm font-semibold border border-accent/20 px-4 py-1.5 rounded-full bg-accent/5 backdrop-blur-sm">
-            Precision Digital Systems
-          </div>
+      <div className="hero-content relative z-10 flex flex-col items-start gap-6 max-w-4xl w-full">
+        <div className="inline-block font-data text-accent uppercase tracking-widest text-sm font-semibold border border-accent/20 px-4 py-1.5 rounded-full bg-accent/5 backdrop-blur-sm">
+          Precision Digital Systems
         </div>
         <h1 className="flex flex-col text-left leading-[1.05]">
-          <div className="mask-wrapper block-mask">
-            <span className="hero-elem inline-block font-heading font-bold text-5xl md:text-7xl lg:text-[5.5rem] tracking-tight text-foreground">
-              Growth meets
-            </span>
-          </div>
-          <div className="mask-wrapper block-mask mt-2">
-            <span className="hero-elem inline-block font-drama italic text-6xl md:text-[6.5rem] lg:text-[8rem] text-accent tracking-tight pr-4">
-              Precision.
-            </span>
-          </div>
+          <span className="font-heading font-bold text-5xl md:text-7xl lg:text-[5.5rem] tracking-tight text-foreground">
+            Growth meets
+          </span>
+          <span className="font-drama italic text-5xl md:text-[6.5rem] lg:text-[8rem] text-accent tracking-tight pr-4 mt-2">
+            Precision.
+          </span>
         </h1>
-        <div className="mask-wrapper block-mask mt-4">
-          <p className="hero-elem inline-block text-foreground/70 font-data text-base md:text-lg max-w-xl leading-relaxed">
-            We build growth systems and websites for small businesses that turn casual visitors into dedicated clients.
-          </p>
-        </div>
-        <div className="mask-wrapper block-mask mt-8">
-          <button onClick={() => { document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' }); }} className="hero-elem magnetic-btn inline-flex bg-accent text-background px-8 md:px-10 py-4 md:py-5 rounded-full font-bold text-lg items-center gap-3 group cursor-pointer border-none appearance-none">
-            <span className="relative z-10">Book a Free Consultation</span>
-            <ChevronRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
+        <p className="text-foreground/70 font-data text-base md:text-lg max-w-xl leading-relaxed mt-4">
+          We build growth systems and websites for small businesses that turn casual visitors into dedicated clients.
+        </p>
+        <button onClick={() => { document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' }); }} className="magnetic-btn inline-flex bg-accent text-background px-8 md:px-10 py-4 md:py-5 rounded-full font-bold text-lg items-center gap-3 group cursor-pointer border-none appearance-none mt-8">
+          <span className="relative z-10">Book a Free Consultation</span>
+          <ChevronRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
+        </button>
       </div>
 
       {/* Scroll Indicator */}
@@ -198,9 +318,12 @@ const Hero = () => {
 // 2. PROBLEM / PAIN POINT
 const Problem = () => {
   const sectionRef = useRef(null);
+  const headingRef = useRef(null);
+  const subtextRef = useRef(null);
 
   useEffect(() => {
     let ctx = gsap.context(() => {
+      // Entrance animation
       gsap.from('.problem-text', {
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -217,19 +340,21 @@ const Problem = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative w-full py-40 px-8 bg-dark/20">
+    <section ref={sectionRef} className="relative w-full py-20 md:py-40 px-8 bg-dark/20">
       <div className="max-w-4xl mx-auto">
-        <div className="mask-wrapper block-mask">
-          <p className="problem-text inline-block font-drama italic text-4xl md:text-6xl lg:text-7xl leading-tight text-foreground/90">
-            Your current website isn't just sitting there.
-          </p>
+        <div ref={headingRef}>
+          <div className="mask-wrapper block-mask drama-mask">
+            <p className="problem-text inline-block font-drama italic text-4xl md:text-6xl lg:text-7xl leading-tight text-foreground/90">
+              Your current website isn't just sitting there.
+            </p>
+          </div>
+          <div className="mask-wrapper block-mask drama-mask mt-2">
+            <p className="problem-text inline-block font-drama italic text-4xl md:text-6xl lg:text-7xl leading-tight text-accent">
+              It's costing you customers.
+            </p>
+          </div>
         </div>
-        <div className="mask-wrapper block-mask mt-2">
-          <p className="problem-text inline-block font-drama italic text-4xl md:text-6xl lg:text-7xl leading-tight text-accent">
-            It's costing you customers.
-          </p>
-        </div>
-        <div className="mask-wrapper block-mask mt-8">
+        <div ref={subtextRef} className="mask-wrapper block-mask mt-8">
           <p className="problem-text inline-block font-data text-foreground/60 max-w-2xl leading-relaxed text-sm md:text-base">
             Outdated templates, slow load times, and confusing navigation tell potential clients that your business isn't ready for them. We fix the leaks in your digital foundation.
           </p>
@@ -270,14 +395,17 @@ const ServiceCard = ({ svc }) => {
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="tilt-card group bg-dark/40 border border-white/5 hover:border-accent/30 rounded-[2rem] p-10 transition-colors duration-500"
+      className="service-card-enter tilt-card group bg-dark/40 border border-white/5 hover:border-accent/30 rounded-[2rem] p-6 md:p-10 transition-colors duration-500"
     >
       <div className="tilt-content">
-        <div className="w-14 h-14 rounded-full bg-background border border-white/10 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
+        <div className="w-14 h-14 rounded-full bg-background border border-white/10 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(201,168,76,0.15)] transition-all duration-500">
           {svc.icon}
         </div>
-        <h3 className="font-heading font-bold text-2xl mb-4">{svc.title}</h3>
-        <p className="text-foreground/70 font-data text-sm leading-relaxed">
+        <div className="relative mb-4">
+          <h3 className="font-heading font-bold text-2xl">{svc.title}</h3>
+          <span className="absolute bottom-0 left-0 h-[1px] w-0 bg-accent group-hover:w-full transition-all duration-500 ease-out"></span>
+        </div>
+        <p className="text-foreground/70 group-hover:text-foreground/90 font-data text-sm leading-relaxed transition-colors duration-500">
           {svc.desc}
         </p>
       </div>
@@ -287,6 +415,10 @@ const ServiceCard = ({ svc }) => {
 
 // 3. SERVICES
 const Services = () => {
+  const sectionRef = useRef(null);
+  const headingRef = useRef(null);
+  const gridRef = useRef(null);
+
   const services = [
     {
       icon: <Layout size={24} className="text-accent" />,
@@ -305,11 +437,28 @@ const Services = () => {
     }
   ];
 
-  return (
-    <section id="services" className="py-32 px-8 max-w-7xl mx-auto w-full" style={{ perspective: '1000px' }}>
-      <SectionHeading subtitle="01 // Capabilities">Architecture for scale</SectionHeading>
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Entrance animations
+      gsap.from(headingRef.current, {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+      });
+      gsap.from('.service-card-enter', {
+        scrollTrigger: { trigger: gridRef.current, start: 'top 80%' },
+        y: 50, opacity: 0, stagger: 0.15, duration: 0.8, ease: 'power3.out'
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  return (
+    <section ref={sectionRef} id="services" className="py-20 md:py-32 px-8 max-w-7xl mx-auto w-full" style={{ perspective: '1000px' }}>
+      <div ref={headingRef}>
+        <SectionHeading subtitle="01 // Capabilities">Architecture for scale</SectionHeading>
+      </div>
+
+      <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {services.map((svc, i) => (
           <ServiceCard key={i} svc={svc} />
         ))}
@@ -321,6 +470,29 @@ const Services = () => {
 // 4. PROCESS / HOW IT WORKS
 const ProcessCard = ({ step }) => {
   const cardRef = useRef(null);
+  const numRef = useRef(null);
+
+  useEffect(() => {
+    const el = numRef.current;
+    if (!el) return;
+    const target = parseInt(step.num, 10);
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: cardRef.current,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => {
+          let current = 0;
+          const interval = setInterval(() => {
+            current++;
+            el.textContent = current.toString().padStart(2, '0');
+            if (current >= target) clearInterval(interval);
+          }, 80);
+        }
+      });
+    });
+    return () => ctx.revert();
+  }, [step.num]);
 
   const handleMouseMove = (e) => {
     if (!cardRef.current) return;
@@ -350,18 +522,26 @@ const ProcessCard = ({ step }) => {
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="tilt-card group bg-dark/40 border border-white/5 hover:border-accent/30 rounded-[2rem] p-10 transition-colors duration-500"
+      className="process-card-enter tilt-card group bg-dark/40 border border-white/5 hover:border-accent/30 rounded-[2rem] p-6 md:p-10 transition-colors duration-500"
     >
       <div className="tilt-content">
-        <div className="font-data text-accent text-5xl opacity-40 mb-6 font-bold tracking-tighter">{step.num}</div>
-        <h3 className="font-heading font-bold text-xl mb-3 text-foreground">{step.title}</h3>
-        <p className="text-foreground/60 font-data text-sm leading-relaxed">{step.desc}</p>
+        <div ref={numRef} className="font-data text-accent text-5xl opacity-40 group-hover:opacity-60 mb-6 font-bold tracking-tighter transition-opacity duration-500">00</div>
+        <div className="relative mb-3">
+          <h3 className="font-heading font-bold text-xl text-foreground">{step.title}</h3>
+          <span className="absolute bottom-0 left-0 h-[1px] w-0 bg-accent group-hover:w-full transition-all duration-500 ease-out"></span>
+        </div>
+        <p className="text-foreground/60 group-hover:text-foreground/80 font-data text-sm leading-relaxed transition-colors duration-500">{step.desc}</p>
       </div>
     </div>
   );
 };
 
 const Process = () => {
+  const sectionRef = useRef(null);
+  const gradientRef = useRef(null);
+  const headingRef = useRef(null);
+  const gridRef = useRef(null);
+
   const steps = [
     { num: "01", title: "Consultation", desc: "We map your goals and locate the current digital bottlenecks." },
     { num: "02", title: "Design", desc: "Bespoke architecture and high-contrast aesthetics are drafted." },
@@ -369,14 +549,31 @@ const Process = () => {
     { num: "04", title: "Support", desc: "Ongoing tuning and optimization to ensure long-term scale." }
   ];
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Entrance animations
+      gsap.from(headingRef.current, {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+      });
+      gsap.from('.process-card-enter', {
+        scrollTrigger: { trigger: gridRef.current, start: 'top 80%' },
+        y: 50, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power3.out'
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="process" className="py-32 px-8 w-full relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-dark/30 to-transparent pointer-events-none"></div>
+    <section ref={sectionRef} id="process" className="py-20 md:py-32 px-8 w-full relative overflow-hidden">
+      <div ref={gradientRef} className="absolute inset-0 bg-gradient-to-b from-transparent via-dark/30 to-transparent pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto relative z-10" style={{ perspective: '1000px' }}>
-        <SectionHeading subtitle="02 // The Process">Stress-free deployment.</SectionHeading>
+        <div ref={headingRef}>
+          <SectionHeading subtitle="02 // The Process">Stress-free deployment.</SectionHeading>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step, i) => (
             <ProcessCard key={i} step={step} />
           ))}
@@ -387,41 +584,44 @@ const Process = () => {
 };
 
 const PortfolioItem = ({ work }) => {
-  const containerRef = useRef(null);
-  const imgRef = useRef(null);
+  const itemRef = useRef(null);
+  const wipeRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo(imgRef.current,
-        { yPercent: -10 }, // Start slightly higher
-        {
-          yPercent: 10,    // Move down slightly as user scrolls (total 20% travel)
-          ease: 'none',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: true,
-          }
+      gsap.set(wipeRef.current, { scaleX: 1, transformOrigin: 'left center' });
+      ScrollTrigger.create({
+        trigger: itemRef.current,
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+          gsap.to(wipeRef.current, {
+            scaleX: 0,
+            transformOrigin: 'right center',
+            duration: 1.2,
+            ease: 'power3.inOut',
+            delay: 0.2
+          });
         }
-      );
-    }, containerRef);
+      });
+    });
     return () => ctx.revert();
   }, []);
 
   return (
-    <div ref={containerRef} className="portfolio-item group relative overflow-hidden rounded-[2rem] border border-white/5 bg-dark">
+    <div ref={itemRef} className="portfolio-item group relative overflow-hidden rounded-[2rem] border border-white/5 bg-dark">
       <div className="aspect-[4/3] overflow-hidden relative">
+        {/* Color wipe reveal overlay */}
+        <div ref={wipeRef} className="absolute inset-0 bg-accent z-20 pointer-events-none"></div>
         {/* Dark overlay to maintain Midnight Luxe aesthetic over images */}
         <div className="absolute inset-0 bg-background/20 group-hover:bg-transparent transition-colors duration-700 z-10 pointer-events-none"></div>
         <img
-          ref={imgRef}
           src={work.image}
           alt={work.client}
-          className="absolute inset-0 w-full h-[120%] object-cover scale-100 group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] grayscale group-hover:grayscale-0"
+          className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] grayscale group-hover:grayscale-0"
         />
       </div>
-      <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-background via-background/80 to-transparent z-20 pointer-events-none">
+      <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-background via-background/80 to-transparent z-30 pointer-events-none">
         <div className="font-data text-xs text-accent uppercase tracking-widest mb-2">{work.tag}</div>
         <h3 className="font-heading font-bold text-2xl">{work.client}</h3>
       </div>
@@ -431,6 +631,8 @@ const PortfolioItem = ({ work }) => {
 
 // 5. PORTFOLIO / WORK
 const Portfolio = () => {
+  const sectionRef = useRef(null);
+
   // Using a stark, architectural dark image as a placeholder for a mockup device/work piece
   const works = [
     {
@@ -445,9 +647,23 @@ const Portfolio = () => {
     }
   ];
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from('.portfolio-heading-enter', {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+      });
+      gsap.from('.portfolio-item', {
+        scrollTrigger: { trigger: '.portfolio-item', start: 'top 85%' },
+        y: 60, opacity: 0, stagger: 0.2, duration: 0.9, ease: 'power3.out'
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="portfolio" className="py-32 px-8 max-w-7xl mx-auto w-full">
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 md:mb-24 gap-8">
+    <section ref={sectionRef} id="portfolio" className="py-20 md:py-32 px-8 max-w-7xl mx-auto w-full">
+      <div className="portfolio-heading-enter flex flex-col md:flex-row md:items-end justify-between mb-16 md:mb-24 gap-8">
         <div>
           <div className="font-data text-accent text-sm md:text-base uppercase tracking-widest mb-4">03 // Field Operations</div>
           <h2 className="font-heading font-bold text-4xl md:text-6xl text-foreground max-w-2xl leading-tight">
@@ -470,14 +686,38 @@ const Portfolio = () => {
 
 // 6. MISSION STATEMENT
 const Mission = () => {
+  const sectionRef = useRef(null);
+  const labelRef = useRef(null);
+  const quoteRef = useRef(null);
+  const subtextRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Entrance animations
+      gsap.from(labelRef.current, {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
+        y: 30, opacity: 0, duration: 0.6, ease: 'power3.out'
+      });
+      gsap.from(quoteRef.current, {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 70%' },
+        y: 50, opacity: 0, duration: 1, ease: 'power3.out', delay: 0.2
+      });
+      gsap.from(subtextRef.current, {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 65%' },
+        y: 30, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.4
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="py-32 px-8 bg-accent text-background">
+    <section ref={sectionRef} className="py-20 md:py-32 px-8 bg-accent text-background overflow-hidden">
       <div className="max-w-5xl mx-auto">
-        <div className="font-data text-background/60 text-sm uppercase tracking-widest mb-8">Our Mission</div>
-        <p className="font-drama italic text-3xl md:text-5xl leading-tight">
+        <div ref={labelRef} className="font-data text-background/60 text-sm uppercase tracking-widest mb-8">Our Mission</div>
+        <p ref={quoteRef} className="font-drama italic text-3xl md:text-5xl leading-tight">
           Every small business deserves a website that works as hard as they do. Not a template. Not a brochure. A precision-built system designed to turn visitors into customers.
         </p>
-        <p className="font-data mt-10 text-background/70 text-sm md:text-base max-w-2xl leading-relaxed">
+        <p ref={subtextRef} className="font-data mt-10 text-background/70 text-sm md:text-base max-w-2xl leading-relaxed">
           We exist to close the gap between enterprise-quality web design and small business budgets. Your growth is our benchmark.
         </p>
       </div>
@@ -487,10 +727,31 @@ const Mission = () => {
 
 // 7. ABOUT / WHY APEX
 const About = () => {
+  const sectionRef = useRef(null);
+  const headingRef = useRef(null);
+  const bodyRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Entrance animations
+      gsap.from(headingRef.current, {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+      });
+      gsap.from(bodyRef.current, {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 70%' },
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.2
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="py-32 px-8 max-w-7xl mx-auto w-full">
-      <SectionHeading subtitle="04 // The Directive">Built for small business scale.</SectionHeading>
-      <div className="font-data text-foreground/80 leading-loose text-base md:text-lg max-w-3xl">
+    <section ref={sectionRef} className="py-20 md:py-32 px-8 max-w-7xl mx-auto w-full">
+      <div ref={headingRef}>
+        <SectionHeading subtitle="04 // The Directive">Built for small business scale.</SectionHeading>
+      </div>
+      <div ref={bodyRef} className="font-data text-foreground/80 leading-loose text-base md:text-lg max-w-3xl">
         <p>
           Small businesses form the absolute core of the economy, yet are continually forced into generic, low-conversion website templates.
         </p>
@@ -504,6 +765,8 @@ const About = () => {
 
 // 8. CTA BANNER
 const CTABanner = () => {
+  const sectionRef = useRef(null);
+  const contentRef = useRef(null);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
 
@@ -512,64 +775,97 @@ const CTABanner = () => {
     setSubmitted(true);
   };
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(contentRef.current, {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
+        y: 50, opacity: 0, duration: 0.9, ease: 'power3.out'
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="cta" className="py-32 px-8 w-full mt-12 mb-24 max-w-7xl mx-auto">
-      <div className="bg-dark border border-white/10 rounded-[3rem] p-12 md:p-24 relative overflow-hidden group">
-        {/* Subtle geometric background */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-0 right-0 w-96 h-96 border border-accent rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-1000"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 border border-accent rounded-full translate-y-1/2 -translate-x-1/2 group-hover:scale-110 transition-transform duration-1000 delay-100"></div>
+    <section ref={sectionRef} id="cta" className="py-20 md:py-32 px-8 w-full mt-12 mb-24 max-w-7xl mx-auto">
+      <div className="border border-white/10 rounded-[3rem] p-8 md:p-16 lg:p-24 relative overflow-hidden bg-background">
+        {/* Decorative circles — more visible, larger */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          <div className="absolute -top-32 -right-32 w-[500px] h-[500px] border border-accent/40 rounded-full"></div>
+          <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] border border-accent/40 rounded-full"></div>
         </div>
 
-        <div className="relative z-10 max-w-3xl flex flex-col items-start">
-          <h2 className="font-heading font-bold text-4xl md:text-6xl mb-6">Ready to stand out online?</h2>
-          <p className="font-data text-foreground mb-10">
-            Stop losing clients to a poorly performing website. Tell us about your project and we'll get back to you within 24 hours.
-          </p>
+        <div ref={contentRef} className="relative z-10">
+          {/* Two-column layout: heading left, form right */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
 
-          {submitted ? (
-            <div className="w-full bg-accent/10 border border-accent/30 rounded-2xl p-10 text-center">
-              <CheckCircle size={48} className="text-accent mx-auto mb-4" />
-              <h3 className="font-heading font-bold text-2xl mb-2">Message received.</h3>
-              <p className="font-data text-foreground/70 text-sm">We'll be in touch within 24 hours.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input
-                  type="text"
-                  placeholder="Your name"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-background/50 border border-white/10 rounded-xl px-6 py-4 font-data text-sm text-accent placeholder:text-foreground/60 focus:outline-none focus:border-accent/50 transition-colors"
-                />
-                <input
-                  type="email"
-                  placeholder="Your email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-background/50 border border-white/10 rounded-xl px-6 py-4 font-data text-sm text-accent placeholder:text-foreground/60 focus:outline-none focus:border-accent/50 transition-colors"
-                />
+            {/* Left column — messaging */}
+            <div className="flex flex-col">
+              <div className="font-data text-accent text-sm uppercase tracking-widest mb-4">05 // Let's Talk</div>
+              <h2 className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">Ready to stand out online?</h2>
+              <p className="font-data text-foreground/60 text-sm md:text-base leading-relaxed max-w-md">
+                Stop losing clients to a poorly performing website. Tell us about your project and we'll get back to you within 24 hours.
+              </p>
+              <div className="hidden lg:flex flex-col gap-4 mt-12 font-data text-sm text-foreground/40">
+                <div className="flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-accent"></div>
+                  Free consultation — no obligation
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-accent"></div>
+                  Response within 24 hours
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-accent"></div>
+                  Custom strategy for your business
+                </div>
               </div>
-              <textarea
-                placeholder="Tell us about your project..."
-                required
-                rows={4}
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full bg-background/50 border border-white/10 rounded-xl px-6 py-4 font-data text-sm text-accent placeholder:text-foreground/60 focus:outline-none focus:border-accent/50 transition-colors resize-none"
-              />
-              <button
-                type="submit"
-                className="magnetic-btn self-start bg-accent text-background px-10 py-5 rounded-full font-bold text-lg flex items-center gap-3 cursor-pointer border-none appearance-none"
-              >
-                <span className="relative z-10">Send Message</span>
-                <ArrowRight size={20} className="relative z-10" />
-              </button>
-            </form>
-          )}
+            </div>
+
+            {/* Right column — form */}
+            <div>
+              {submitted ? (
+                <div className="w-full bg-accent/5 border border-accent/20 rounded-2xl p-10 md:p-12 text-center">
+                  <CheckCircle size={48} className="text-accent mx-auto mb-6" />
+                  <h3 className="font-heading font-bold text-2xl mb-3">Message received.</h3>
+                  <p className="font-data text-foreground/60 text-sm max-w-sm mx-auto">We'll review your project details and get back to you within 24 hours with a custom strategy.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                  <input
+                    type="text"
+                    placeholder="Your name"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full bg-dark/30 border border-white/10 rounded-xl px-6 py-4 font-data text-sm text-accent placeholder:text-accent/40 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-colors"
+                  />
+                  <input
+                    type="email"
+                    placeholder="Your email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full bg-dark/30 border border-white/10 rounded-xl px-6 py-4 font-data text-sm text-accent placeholder:text-accent/40 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-colors"
+                  />
+                  <textarea
+                    placeholder="Tell us about your project..."
+                    required
+                    rows={5}
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="w-full bg-dark/30 border border-white/10 rounded-xl px-6 py-4 font-data text-sm text-accent placeholder:text-accent/40 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-colors resize-none"
+                  />
+                  <button
+                    type="submit"
+                    className="magnetic-btn w-full md:w-auto md:self-end bg-accent text-background px-10 py-5 rounded-full font-bold text-lg flex items-center justify-center gap-3 cursor-pointer border-none appearance-none"
+                  >
+                    <span className="relative z-10">Send Message</span>
+                    <ArrowRight size={20} className="relative z-10" />
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -586,7 +882,7 @@ const Footer = () => {
           <p className="font-data text-sm text-foreground/50 mb-6">
             Growth systems engineered for precision.
           </p>
-          <a href="#cta" className="text-accent text-sm font-semibold hover:underline underline-offset-4 decoration-accent/50 transition-all">
+          <a href="#cta" onClick={(e) => { e.preventDefault(); document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' }); }} className="text-accent text-sm font-semibold hover:underline underline-offset-4 decoration-accent/50 transition-all">
             Book a Consultation →
           </a>
         </div>
@@ -594,20 +890,26 @@ const Footer = () => {
         <div className="flex gap-16 md:gap-24 font-data text-sm">
           <div className="flex flex-col gap-3 text-foreground/60">
             <div className="text-white font-semibold mb-2 uppercase tracking-wide text-xs">Navigation</div>
-            <a href="#services" className="hover:text-accent transition-colors">Services</a>
-            <a href="#process" className="hover:text-accent transition-colors">Process</a>
-            <a href="#portfolio" className="hover:text-accent transition-colors">Work</a>
+            <a href="#services" onClick={(e) => { e.preventDefault(); document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' }); }} className="hover:text-accent transition-colors">Services</a>
+            <a href="#process" onClick={(e) => { e.preventDefault(); document.getElementById('process')?.scrollIntoView({ behavior: 'smooth' }); }} className="hover:text-accent transition-colors">Process</a>
+            <a href="#portfolio" onClick={(e) => { e.preventDefault(); document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' }); }} className="hover:text-accent transition-colors">Work</a>
           </div>
           <div className="flex flex-col gap-3 text-foreground/60">
             <div className="text-white font-semibold mb-2 uppercase tracking-wide text-xs">Contact</div>
             <a href="mailto:david@apexdigital.com" className="hover:text-accent transition-colors">david@apexdigital.com</a>
-            <a href="#cta" className="hover:text-accent transition-colors">Free Consultation</a>
+            <a href="#cta" onClick={(e) => { e.preventDefault(); document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' }); }} className="hover:text-accent transition-colors">Free Consultation</a>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between font-data text-xs text-foreground/30">
         <div>&copy; {new Date().getFullYear()} Apex Digital. All rights reserved.</div>
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="flex items-center gap-2 text-foreground/30 hover:text-accent transition-colors duration-300 mt-4 md:mt-0 cursor-pointer bg-transparent border-none appearance-none"
+        >
+          Back to top <ArrowUp size={14} />
+        </button>
       </div>
     </footer>
   );
@@ -618,7 +920,7 @@ const Footer = () => {
 function App() {
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     });
@@ -644,6 +946,7 @@ function App() {
 
   return (
     <div className="w-full min-h-[100dvh]">
+      <IntroOverlay />
       <CustomCursor />
       <Navbar />
       <Hero />

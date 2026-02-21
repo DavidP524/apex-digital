@@ -139,6 +139,11 @@
   vertical-align: top;
 }
 
+/* Italic drama text needs visible overflow for descenders (g, y, p) */
+.mask-wrapper.drama-mask {
+  overflow: visible;
+}
+
 .mask-wrapper.block-mask {
   display: block;
 }

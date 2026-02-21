@@ -319,6 +319,48 @@ const Services = () => {
 };
 
 // 4. PROCESS / HOW IT WORKS
+const ProcessCard = ({ step }) => {
+  const cardRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+
+    gsap.to(cardRef.current, {
+      rotationY: (x / rect.width) * 15,
+      rotationX: -(y / rect.height) * 15,
+      duration: 0.5,
+      ease: 'power2.out',
+    });
+  };
+
+  const handleMouseLeave = () => {
+    gsap.to(cardRef.current, {
+      rotationY: 0,
+      rotationX: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+    });
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="tilt-card group bg-dark/40 border border-white/5 hover:border-accent/30 rounded-[2rem] p-10 transition-colors duration-500"
+    >
+      <div className="tilt-content">
+        <div className="font-data text-accent text-5xl opacity-40 mb-6 font-bold tracking-tighter">{step.num}</div>
+        <h3 className="font-heading font-bold text-xl mb-3 text-foreground">{step.title}</h3>
+        <p className="text-foreground/60 font-data text-sm leading-relaxed">{step.desc}</p>
+      </div>
+    </div>
+  );
+};
+
 const Process = () => {
   const steps = [
     { num: "01", title: "Consultation", desc: "We map your goals and locate the current digital bottlenecks." },
@@ -331,21 +373,12 @@ const Process = () => {
     <section id="process" className="py-32 px-8 w-full relative">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-dark/30 to-transparent pointer-events-none"></div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto relative z-10" style={{ perspective: '1000px' }}>
         <SectionHeading subtitle="02 // The Process">Stress-free deployment.</SectionHeading>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step, i) => (
-            <div key={i} className="relative pt-8">
-              {/* Connecting line (desktop) */}
-              {i !== steps.length - 1 && (
-                <div className="hidden lg:block absolute top-[4.5rem] left-[50%] w-full h-[1px] bg-gradient-to-r from-accent/30 to-transparent"></div>
-              )}
-
-              <div className="font-data text-accent text-5xl opacity-40 mb-6 font-bold tracking-tighter">{step.num}</div>
-              <h3 className="font-heading font-bold text-xl mb-3 text-foreground">{step.title}</h3>
-              <p className="text-foreground/60 font-data text-sm leading-relaxed">{step.desc}</p>
-            </div>
+            <ProcessCard key={i} step={step} />
           ))}
         </div>
       </div>
@@ -435,18 +468,18 @@ const Portfolio = () => {
   );
 };
 
-// 6. TESTIMONIALS (Philosophy Placeholder)
-const Testimonials = () => {
+// 6. MISSION STATEMENT
+const Mission = () => {
   return (
     <section className="py-32 px-8 bg-accent text-background">
       <div className="max-w-5xl mx-auto">
-        <svg className="w-12 h-12 mb-10 opacity-30" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-        </svg>
+        <div className="font-data text-background/60 text-sm uppercase tracking-widest mb-8">Our Mission</div>
         <p className="font-drama italic text-3xl md:text-5xl leading-tight">
-          "We refuse to build digital brochures. We build fully calibrated instruments that generate revenue. The results speak for themselves."
+          Every small business deserves a website that works as hard as they do. Not a template. Not a brochure. A precision-built system designed to turn visitors into customers.
         </p>
-        <p className="font-heading font-bold mt-10 uppercase tracking-widest text-sm">— The Apex Philosophy</p>
+        <p className="font-data mt-10 text-background/70 text-sm md:text-base max-w-2xl leading-relaxed">
+          We exist to close the gap between enterprise-quality web design and small business budgets. Your growth is our benchmark.
+        </p>
       </div>
     </section>
   );
@@ -471,6 +504,14 @@ const About = () => {
 
 // 8. CTA BANNER
 const CTABanner = () => {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
   return (
     <section id="cta" className="py-32 px-8 w-full mt-12 mb-24 max-w-7xl mx-auto">
       <div className="bg-dark border border-white/10 rounded-[3rem] p-12 md:p-24 relative overflow-hidden group">
@@ -482,13 +523,53 @@ const CTABanner = () => {
 
         <div className="relative z-10 max-w-3xl flex flex-col items-start">
           <h2 className="font-heading font-bold text-4xl md:text-6xl mb-6">Ready to stand out online?</h2>
-          <p className="font-data text-foreground/70 mb-12">
-            Stop losing clients to a poorly performing website. Let's architect a solution that drives growth.
+          <p className="font-data text-foreground mb-10">
+            Stop losing clients to a poorly performing website. Tell us about your project and we'll get back to you within 24 hours.
           </p>
-          <button onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="magnetic-btn bg-accent text-background px-10 py-5 rounded-full font-bold text-lg flex items-center gap-3">
-            <span>Return to Top</span>
-            <ArrowRight size={20} className="-rotate-90" />
-          </button>
+
+          {submitted ? (
+            <div className="w-full bg-accent/10 border border-accent/30 rounded-2xl p-10 text-center">
+              <CheckCircle size={48} className="text-accent mx-auto mb-4" />
+              <h3 className="font-heading font-bold text-2xl mb-2">Message received.</h3>
+              <p className="font-data text-foreground/70 text-sm">We'll be in touch within 24 hours.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <input
+                  type="text"
+                  placeholder="Your name"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-background/50 border border-white/10 rounded-xl px-6 py-4 font-data text-sm text-accent placeholder:text-foreground/60 focus:outline-none focus:border-accent/50 transition-colors"
+                />
+                <input
+                  type="email"
+                  placeholder="Your email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full bg-background/50 border border-white/10 rounded-xl px-6 py-4 font-data text-sm text-accent placeholder:text-foreground/60 focus:outline-none focus:border-accent/50 transition-colors"
+                />
+              </div>
+              <textarea
+                placeholder="Tell us about your project..."
+                required
+                rows={4}
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                className="w-full bg-background/50 border border-white/10 rounded-xl px-6 py-4 font-data text-sm text-accent placeholder:text-foreground/60 focus:outline-none focus:border-accent/50 transition-colors resize-none"
+              />
+              <button
+                type="submit"
+                className="magnetic-btn self-start bg-accent text-background px-10 py-5 rounded-full font-bold text-lg flex items-center gap-3 cursor-pointer border-none appearance-none"
+              >
+                <span className="relative z-10">Send Message</span>
+                <ArrowRight size={20} className="relative z-10" />
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </section>
@@ -518,20 +599,15 @@ const Footer = () => {
             <a href="#portfolio" className="hover:text-accent transition-colors">Work</a>
           </div>
           <div className="flex flex-col gap-3 text-foreground/60">
-            <div className="text-white font-semibold mb-2 uppercase tracking-wide text-xs">Connect</div>
-            <a href="#" className="hover:text-accent transition-colors">LinkedIn</a>
-            <a href="#" className="hover:text-accent transition-colors">X (Twitter)</a>
-            <a href="#" className="hover:text-accent transition-colors">Email</a>
+            <div className="text-white font-semibold mb-2 uppercase tracking-wide text-xs">Contact</div>
+            <a href="mailto:david@apexdigital.com" className="hover:text-accent transition-colors">david@apexdigital.com</a>
+            <a href="#cta" className="hover:text-accent transition-colors">Free Consultation</a>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between font-data text-xs text-foreground/30">
         <div>&copy; {new Date().getFullYear()} Apex Digital. All rights reserved.</div>
-        <div className="mt-4 md:mt-0 flex gap-6">
-          <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>
-        </div>
       </div>
     </footer>
   );
@@ -575,7 +651,7 @@ function App() {
       <Services />
       <Process />
       <Portfolio />
-      <Testimonials />
+      <Mission />
       <About />
       <CTABanner />
       <Footer />

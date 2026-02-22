@@ -676,17 +676,17 @@ const PortfolioItem = ({ work }) => {
 const Portfolio = () => {
   const sectionRef = useRef(null);
 
-  // Using a stark, architectural dark image as a placeholder for a mockup device/work piece
+  // Real project work — Cell Clinic website
   const works = [
-    {
-      client: "Nura Health",
-      tag: "Biotech Landing Page",
-      image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop" // code/device abstract
-    },
     {
       client: "Cell Clinic",
       tag: "Phone Repair Business",
-      image: "https://images.unsplash.com/photo-1592890288564-76628a30a657?q=80&w=1200&auto=format&fit=crop" // phone repair
+      image: "/cell-clinic-hero.png"
+    },
+    {
+      client: "Cell Clinic",
+      tag: "Services & Pricing",
+      image: "/cell-clinic-services.png"
     }
   ];
 

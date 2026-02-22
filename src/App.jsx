@@ -161,8 +161,9 @@ const Navbar = () => {
         <img src={apexLogo} alt="Apex Digital" className="h-9" />
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
           <a href="#services" onClick={(e) => { e.preventDefault(); scrollTo('services'); }} className="hover:text-accent transition-colors duration-300">Services</a>
-          <a href="#process" onClick={(e) => { e.preventDefault(); scrollTo('process'); }} className="hover:text-accent transition-colors duration-300">Process</a>
           <a href="#portfolio" onClick={(e) => { e.preventDefault(); scrollTo('portfolio'); }} className="hover:text-accent transition-colors duration-300">Work</a>
+          <a href="#pricing" onClick={(e) => { e.preventDefault(); scrollTo('pricing'); }} className="hover:text-accent transition-colors duration-300">Pricing</a>
+          <a href="#faq" onClick={(e) => { e.preventDefault(); scrollTo('faq'); }} className="hover:text-accent transition-colors duration-300">FAQ</a>
         </div>
         <button onClick={() => scrollTo('cta')} className="hidden md:flex magnetic-btn bg-accent text-background px-6 py-2.5 rounded-full font-semibold text-sm items-center gap-2 group cursor-pointer border-none appearance-none">
           <span className="relative z-10">Consultation</span>
@@ -181,8 +182,9 @@ const Navbar = () => {
       {menuOpen && (
         <div className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl flex flex-col items-center justify-center gap-2">
           <a href="#services" onClick={(e) => { e.preventDefault(); scrollTo('services'); }} className="mobile-nav-link font-heading text-3xl font-bold text-foreground hover:text-accent transition-colors py-4">Services</a>
-          <a href="#process" onClick={(e) => { e.preventDefault(); scrollTo('process'); }} className="mobile-nav-link font-heading text-3xl font-bold text-foreground hover:text-accent transition-colors py-4">Process</a>
           <a href="#portfolio" onClick={(e) => { e.preventDefault(); scrollTo('portfolio'); }} className="mobile-nav-link font-heading text-3xl font-bold text-foreground hover:text-accent transition-colors py-4">Work</a>
+          <a href="#pricing" onClick={(e) => { e.preventDefault(); scrollTo('pricing'); }} className="mobile-nav-link font-heading text-3xl font-bold text-foreground hover:text-accent transition-colors py-4">Pricing</a>
+          <a href="#faq" onClick={(e) => { e.preventDefault(); scrollTo('faq'); }} className="mobile-nav-link font-heading text-3xl font-bold text-foreground hover:text-accent transition-colors py-4">FAQ</a>
           <button onClick={() => scrollTo('cta')} className="mobile-nav-link magnetic-btn mt-6 bg-accent text-background px-8 py-4 rounded-full font-bold text-lg cursor-pointer border-none appearance-none">
             Book a Consultation
           </button>
@@ -375,7 +377,7 @@ const StatsBanner = () => {
   const sectionRef = useRef(null);
 
   const stats = [
-    { value: "< 2s", label: "Load Time", desc: "Sites built for speed that keep visitors engaged" },
+    { value: "< 2s", label: "Load Time", desc: "Speed that keeps visitors engaged" },
     { value: "Mobile-First", label: "Design Approach", desc: "Every pixel optimized for phones first" },
     { value: "24hr", label: "Response Time", desc: "We get back to you within a day" },
   ];
@@ -682,9 +684,9 @@ const Portfolio = () => {
       image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop" // code/device abstract
     },
     {
-      client: "Aether Capital",
-      tag: "Fintech Rebrand",
-      image: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1200&auto=format&fit=crop" // dark desk/office abstract
+      client: "Cell Clinic",
+      tag: "Phone Repair Business",
+      image: "https://images.unsplash.com/photo-1592890288564-76628a30a657?q=80&w=1200&auto=format&fit=crop" // phone repair
     }
   ];
 
@@ -838,7 +840,7 @@ const Pricing = () => {
         <SectionHeading subtitle="05 // Investment">Transparent pricing.</SectionHeading>
       </div>
 
-      <div ref={cardRef} className="max-w-2xl mx-auto bg-dark/40 border border-white/5 rounded-[2rem] p-8 md:p-12 lg:p-16">
+      <div ref={cardRef} className="max-w-3xl bg-dark/40 border border-white/5 rounded-[2rem] p-8 md:p-12 lg:p-16">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
             <div className="font-data text-foreground/50 text-sm uppercase tracking-widest mb-2">Starting at</div>
@@ -930,6 +932,14 @@ const FAQ = () => {
       question: "Do you handle hosting?",
       answer: "Yes. We can set up and manage your hosting so you don't have to think about it. It's included as part of our monthly maintenance plans starting at $50/month.",
     },
+    {
+      question: "What if I already have a website?",
+      answer: "Even better. We'll audit your current site, identify what's working and what's not, and rebuild it into a high-converting system. Your existing content and branding carry over — we just make everything perform better.",
+    },
+    {
+      question: "Can I update the site myself after launch?",
+      answer: "Absolutely. We build sites that are easy to maintain. We'll walk you through how to make basic updates, and our monthly maintenance plans cover anything beyond that.",
+    },
   ];
 
   useEffect(() => {
@@ -947,7 +957,7 @@ const FAQ = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="faq" className="py-20 md:py-32 px-8 max-w-4xl mx-auto w-full">
+    <section ref={sectionRef} id="faq" className="py-20 md:py-32 px-8 max-w-7xl mx-auto w-full">
       <div ref={headingRef}>
         <SectionHeading subtitle="06 // Common Questions">Everything you need to know.</SectionHeading>
       </div>

@@ -92,7 +92,7 @@
   transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     background-color 0.3s ease;
-  mix-blend-mode: normal;
+  mix-blend-mode: screen;
 }
 
 .custom-cursor.hovering-link {
@@ -157,10 +157,4 @@
 iframe {
   contain: layout style paint;
   overflow: hidden !important;
-}
-
-/* Darken cursor over gold background */
-[style*="bg-accent"] .custom-cursor,
-.bg-accent ~ .custom-cursor {
-  background-color: #000;
 }

@@ -650,6 +650,18 @@ const Portfolio = () => {
     return () => ctx.revert();
   }, []);
 
+  useEffect(() => {
+    const demoContainer = sectionRef.current?.querySelector('.portfolio-demo-enter');
+    if (!demoContainer) return;
+
+    const handleWheel = (e) => {
+      e.stopPropagation();
+    };
+
+    demoContainer.addEventListener('wheel', handleWheel, { passive: false });
+    return () => demoContainer.removeEventListener('wheel', handleWheel);
+  }, []);
+
   return (
     <section ref={sectionRef} id="portfolio" className="py-20 md:py-32 px-8 md:px-16 max-w-7xl mx-auto w-full">
       <div className="portfolio-heading-enter flex flex-col md:flex-row md:items-end justify-between mb-16 md:mb-24 gap-8">

@@ -653,7 +653,7 @@ const PortfolioItem = ({ work }) => {
 
   return (
     <div ref={itemRef} className="portfolio-item group relative overflow-hidden rounded-[2rem] border border-white/5 bg-dark">
-      <div className="aspect-[4/3] overflow-hidden relative">
+      <div className="aspect-[4/3] overflow-hidden relative bg-dark/60 flex items-center justify-center">
         {/* Color wipe reveal overlay */}
         <div ref={wipeRef} className="absolute inset-0 bg-accent z-20 pointer-events-none"></div>
         {/* Dark overlay to maintain Midnight Luxe aesthetic over images */}
@@ -661,7 +661,7 @@ const PortfolioItem = ({ work }) => {
         <img
           src={work.image}
           alt={work.client}
-          className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] grayscale group-hover:grayscale-0"
+          className="relative w-full h-full object-contain scale-100 group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] grayscale group-hover:grayscale-0"
         />
       </div>
       <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-background via-background/80 to-transparent z-30 pointer-events-none">

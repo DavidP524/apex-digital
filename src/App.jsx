@@ -35,9 +35,21 @@ const CustomCursor = () => {
 
       const target = e.target;
 
-      // Check if cursor is over a gold background element
-      const isOverGold = target.closest('[style*="bg-accent"]') ||
-                         target.closest('.bg-accent');
+      // Check if cursor is over a gold/accent background by looking for bg-accent class or gold background color
+      let isOverGold = false;
+      let parent = target;
+      while (parent && parent !== document.body) {
+        const classList = parent.className || '';
+        const style = window.getComputedStyle(parent);
+        const bgColor = style.backgroundColor;
+
+        // Check for bg-accent class or gold color (C9A84C = rgb(201, 168, 76))
+        if (classList.includes('bg-accent') || bgColor === 'rgb(201, 168, 76)') {
+          isOverGold = true;
+          break;
+        }
+        parent = parent.parentElement;
+      }
 
       if (
         target.closest('a') ||

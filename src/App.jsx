@@ -35,27 +35,6 @@ const CustomCursor = () => {
 
       const target = e.target;
 
-      // Check if cursor is over a gold/accent background by looking for bg-accent class or gold background color
-      let isOverGold = false;
-      let parent = target;
-      while (parent && parent !== document.body) {
-        const classList = parent.className || '';
-        const style = window.getComputedStyle(parent);
-        const bgColor = style.backgroundColor;
-
-        // Check for bg-accent class or gold color (C9A84C = rgb(201, 168, 76))
-        if (classList.includes('bg-accent') || bgColor === 'rgb(201, 168, 76)') {
-          isOverGold = true;
-          break;
-        }
-        parent = parent.parentElement;
-      }
-
-      // Change cursor color based on background
-      if (cursorRef.current) {
-        cursorRef.current.style.backgroundColor = isOverGold ? '#000' : 'var(--accent)';
-      }
-
       if (
         target.closest('a') ||
         target.closest('button') ||
@@ -66,7 +45,7 @@ const CustomCursor = () => {
       } else if (target.closest('.portfolio-item')) {
         setHoverState('hovering-portfolio');
       } else {
-        setHoverState(isOverGold ? 'over-gold' : '');
+        setHoverState('');
       }
     };
 

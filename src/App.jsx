@@ -370,6 +370,41 @@ const Problem = () => {
   );
 };
 
+// 2.5 STATS BANNER
+const StatsBanner = () => {
+  const sectionRef = useRef(null);
+
+  const stats = [
+    { value: "< 2s", label: "Load Time", desc: "Sites built for speed that keep visitors engaged" },
+    { value: "Mobile-First", label: "Design Approach", desc: "Every pixel optimized for phones first" },
+    { value: "24hr", label: "Response Time", desc: "We get back to you within a day" },
+  ];
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from('.stat-item', {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 80%' },
+        y: 40, opacity: 0, stagger: 0.15, duration: 0.8, ease: 'power3.out'
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section ref={sectionRef} className="w-full py-16 md:py-24 px-8 bg-dark/20 border-y border-white/5">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+        {stats.map((stat, i) => (
+          <div key={i} className="stat-item text-center md:text-left">
+            <div className="font-heading font-bold text-3xl md:text-4xl text-accent mb-2">{stat.value}</div>
+            <div className="font-data text-foreground text-sm font-semibold uppercase tracking-widest mb-2">{stat.label}</div>
+            <p className="font-data text-foreground/50 text-sm">{stat.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
 const ServiceCard = ({ svc }) => {
   const cardRef = useRef(null);
 
@@ -769,7 +804,170 @@ const About = () => {
   );
 };
 
-// 8. CTA BANNER
+// 8. PRICING
+const Pricing = () => {
+  const sectionRef = useRef(null);
+  const headingRef = useRef(null);
+  const cardRef = useRef(null);
+
+  const included = [
+    "Custom design tailored to your brand",
+    "Mobile-responsive on every device",
+    "SEO-ready structure and metadata",
+    "2 rounds of revisions",
+    "Launch support and handoff",
+  ];
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(headingRef.current, {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+      });
+      gsap.from(cardRef.current, {
+        scrollTrigger: { trigger: cardRef.current, start: 'top 85%' },
+        y: 50, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.2
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section ref={sectionRef} id="pricing" className="py-20 md:py-32 px-8 max-w-7xl mx-auto w-full">
+      <div ref={headingRef}>
+        <SectionHeading subtitle="05 // Investment">Transparent pricing.</SectionHeading>
+      </div>
+
+      <div ref={cardRef} className="max-w-2xl mx-auto bg-dark/40 border border-white/5 rounded-[2rem] p-8 md:p-12 lg:p-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+          <div>
+            <div className="font-data text-foreground/50 text-sm uppercase tracking-widest mb-2">Starting at</div>
+            <div className="font-heading font-bold text-5xl md:text-6xl text-accent">$1,000</div>
+          </div>
+          <div className="font-data text-foreground/50 text-sm leading-relaxed max-w-xs">
+            One-time investment for a complete, conversion-ready website built from scratch.
+          </div>
+        </div>
+
+        <div className="border-t border-white/10 pt-8 mb-10">
+          <div className="font-data text-foreground/70 text-xs uppercase tracking-widest mb-6">What's included</div>
+          <div className="flex flex-col gap-4">
+            {included.map((item, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <CheckCircle size={16} className="text-accent flex-shrink-0" />
+                <span className="font-data text-foreground/80 text-sm">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <div className="font-data text-foreground/50 text-sm">Monthly maintenance available from</div>
+            <div className="font-heading font-bold text-2xl text-accent mt-1">$50/month</div>
+          </div>
+          <button
+            onClick={() => document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' })}
+            className="magnetic-btn bg-accent text-background px-8 py-4 rounded-full font-bold text-base flex items-center gap-3 cursor-pointer border-none appearance-none"
+          >
+            <span className="relative z-10">Get Started</span>
+            <ArrowRight size={18} className="relative z-10" />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// 9. FAQ
+const FAQItem = ({ question, answer, isOpen, onClick }) => {
+  const answerRef = useRef(null);
+
+  return (
+    <div
+      className={`border-b border-white/10 transition-colors duration-300 ${isOpen ? 'border-accent/30' : ''}`}
+    >
+      <button
+        onClick={onClick}
+        className="w-full flex items-center justify-between py-6 text-left cursor-pointer bg-transparent border-none appearance-none group"
+      >
+        <span className={`font-heading font-bold text-lg md:text-xl transition-colors duration-300 ${isOpen ? 'text-accent' : 'text-foreground'}`}>
+          {question}
+        </span>
+        <span className={`text-accent text-2xl font-light transition-transform duration-300 ml-4 flex-shrink-0 ${isOpen ? 'rotate-45' : ''}`}>
+          +
+        </span>
+      </button>
+      <div
+        ref={answerRef}
+        className="overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
+        style={{ maxHeight: isOpen ? `${answerRef.current?.scrollHeight || 200}px` : '0px', opacity: isOpen ? 1 : 0 }}
+      >
+        <p className="font-data text-foreground/60 text-sm md:text-base leading-relaxed pb-6 max-w-2xl">
+          {answer}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const FAQ = () => {
+  const sectionRef = useRef(null);
+  const headingRef = useRef(null);
+  const listRef = useRef(null);
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const faqs = [
+    {
+      question: "How long does it take?",
+      answer: "Most projects are designed, built, and launched within one week. Larger or more complex sites may take two. We'll give you a clear timeline during your free consultation.",
+    },
+    {
+      question: "What do I need to get started?",
+      answer: "Just your ideas and a 15-minute conversation. We handle everything else — design, development, hosting setup, and launch. If you have existing branding (logo, colors, copy), great. If not, we'll help you figure it out.",
+    },
+    {
+      question: "Do you handle hosting?",
+      answer: "Yes. We can set up and manage your hosting so you don't have to think about it. It's included as part of our monthly maintenance plans starting at $50/month.",
+    },
+  ];
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(headingRef.current, {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+      });
+      gsap.from(listRef.current, {
+        scrollTrigger: { trigger: listRef.current, start: 'top 85%' },
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.2
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section ref={sectionRef} id="faq" className="py-20 md:py-32 px-8 max-w-4xl mx-auto w-full">
+      <div ref={headingRef}>
+        <SectionHeading subtitle="06 // Common Questions">Everything you need to know.</SectionHeading>
+      </div>
+
+      <div ref={listRef} className="border-t border-white/10">
+        {faqs.map((faq, i) => (
+          <FAQItem
+            key={i}
+            question={faq.question}
+            answer={faq.answer}
+            isOpen={openIndex === i}
+            onClick={() => setOpenIndex(openIndex === i ? null : i)}
+          />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+// 10. CTA BANNER
 const CTABanner = () => {
   const sectionRef = useRef(null);
   const contentRef = useRef(null);
@@ -806,7 +1004,7 @@ const CTABanner = () => {
 
             {/* Left column — messaging */}
             <div className="flex flex-col">
-              <div className="font-data text-accent text-sm uppercase tracking-widest mb-4">05 // Let's Talk</div>
+              <div className="font-data text-accent text-sm uppercase tracking-widest mb-4">07 // Let's Talk</div>
               <h2 className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">Ready to stand out online?</h2>
               <p className="font-data text-foreground/60 text-sm md:text-base leading-relaxed max-w-md">
                 Stop losing clients to a poorly performing website. Tell us about your project and we'll get back to you within 24 hours.
@@ -957,11 +1155,14 @@ function App() {
       <Navbar />
       <Hero />
       <Problem />
+      <StatsBanner />
       <Services />
       <Process />
       <Portfolio />
       <Mission />
       <About />
+      <Pricing />
+      <FAQ />
       <CTABanner />
       <Footer />
     </div>

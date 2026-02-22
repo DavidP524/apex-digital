@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0D0D12"/>
+  <g transform="translate(343, 120) scale(1)">
+    <svg viewBox="0 0 513.97 339.9" width="514" height="340">
+      <defs><style>.cls-1{fill:#faf8f5;}.cls-1,.cls-2{stroke:#000;stroke-miterlimit:10;stroke-width:2px;}.cls-2{fill:#c9a84c;}</style></defs>
+      <g><g>
+        <path class="cls-1" d="M102.18,333.35l146.66-88.89,46.67,88.89h86.67s135.55,9.33,130.66-165.56S382.62,2.24,382.62,2.24H284.4L284,148.46,335.51,244V50.24l48.89.44s77.33-4.89,76.89,117.11S384,282.24,384,282.24l-56.89.89L268,170.68Z"/>
+        <polygon class="cls-2" points="4.4 333.44 172.4 2.15 250.87 146.68 218.18 184.02 182.18 107.13 178.18 116.91 171.07 96.46 108.4 241.79 99.51 226.24 4.4 333.44"/>
+      </g></g>
+    </svg>
+  </g>
+  <text x="600" y="530" text-anchor="middle" font-family="monospace" font-weight="bold" font-size="24" letter-spacing="8" fill="#faf8f5" opacity="0.6">APEX DIGITAL</text>
+</svg>

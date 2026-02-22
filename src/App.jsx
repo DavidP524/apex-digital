@@ -626,69 +626,10 @@ const Process = () => {
   );
 };
 
-const PortfolioItem = ({ work }) => {
-  const itemRef = useRef(null);
-  const wipeRef = useRef(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.set(wipeRef.current, { scaleX: 1, transformOrigin: 'left center' });
-      ScrollTrigger.create({
-        trigger: itemRef.current,
-        start: 'top 80%',
-        once: true,
-        onEnter: () => {
-          gsap.to(wipeRef.current, {
-            scaleX: 0,
-            transformOrigin: 'right center',
-            duration: 1.2,
-            ease: 'power3.inOut',
-            delay: 0.2
-          });
-        }
-      });
-    });
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <div ref={itemRef} className="portfolio-item group relative overflow-hidden rounded-[2rem] border border-white/5 bg-background">
-      <div className="aspect-video overflow-hidden relative flex items-center justify-center">
-        {/* Color wipe reveal overlay */}
-        <div ref={wipeRef} className="absolute inset-0 bg-accent z-20 pointer-events-none"></div>
-        {/* Dark overlay to maintain Midnight Luxe aesthetic over images */}
-        <div className="absolute inset-0 bg-background/20 group-hover:bg-transparent transition-colors duration-700 z-10 pointer-events-none"></div>
-        <img
-          src={work.image}
-          alt={work.client}
-          className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] grayscale group-hover:grayscale-0"
-        />
-      </div>
-      <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-background via-background to-background/40 z-30 pointer-events-none">
-        <div className="font-data text-xs text-accent uppercase tracking-widest mb-2 font-semibold">{work.tag}</div>
-        <h3 className="font-heading font-bold text-2xl text-foreground">{work.client}</h3>
-      </div>
-    </div>
-  );
-};
-
 // 5. PORTFOLIO / WORK
 const Portfolio = () => {
   const sectionRef = useRef(null);
-
-  // Real project work — Cell Clinic website
-  const works = [
-    {
-      client: "Cell Clinic",
-      tag: "Phone Repair Business",
-      image: "/cell-clinic-hero.png"
-    },
-    {
-      client: "Cell Clinic",
-      tag: "Services & Pricing",
-      image: "/cell-clinic-services.png"
-    }
-  ];
+  const iframeRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -696,9 +637,9 @@ const Portfolio = () => {
         scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
         y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
       });
-      gsap.from('.portfolio-item', {
-        scrollTrigger: { trigger: '.portfolio-item', start: 'top 85%' },
-        y: 60, opacity: 0, stagger: 0.2, duration: 0.9, ease: 'power3.out'
+      gsap.from('.portfolio-demo-enter', {
+        scrollTrigger: { trigger: '.portfolio-demo-enter', start: 'top 85%' },
+        y: 60, opacity: 0, duration: 0.9, ease: 'power3.out'
       });
     }, sectionRef);
     return () => ctx.revert();
@@ -718,10 +659,20 @@ const Portfolio = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        {works.map((work, i) => (
-          <PortfolioItem key={i} work={work} />
-        ))}
+      <div className="portfolio-demo-enter max-w-4xl mx-auto">
+        <div className="rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
+          <iframe
+            ref={iframeRef}
+            src="https://cell-clinic-mock-up.vercel.app/"
+            title="Cell Clinic — Phone Repair Website"
+            className="w-full bg-background"
+            style={{ height: '600px', display: 'block', border: 'none' }}
+            allowFullScreen
+          />
+        </div>
+        <p className="font-data text-foreground/50 text-sm text-center mt-8">
+          Explore the live Cell Clinic website. Built for conversion, designed for mobile.
+        </p>
       </div>
     </section>
   );

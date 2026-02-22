@@ -5,6 +5,7 @@ import { ArrowRight, ArrowUp, ChevronRight, Layout, RefreshCw, Wrench, CheckCirc
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import Lenis from 'lenis';
+import apexLogo from './assets/logo.svg';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -157,7 +158,7 @@ const Navbar = () => {
         className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between px-6 md:px-8 py-4 rounded-[2rem] transition-all duration-500 w-[92%] max-w-5xl text-foreground
         [&.nav-scrolled]:bg-background/80 [&.nav-scrolled]:backdrop-blur-xl [&.nav-scrolled]:border [&.nav-scrolled]:border-white/10 [&.nav-scrolled]:py-3"
       >
-        <div className="font-heading font-bold text-xl tracking-tighter">Apex Digital</div>
+        <img src={apexLogo} alt="Apex Digital" className="h-9" />
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
           <a href="#services" onClick={(e) => { e.preventDefault(); scrollTo('services'); }} className="hover:text-accent transition-colors duration-300">Services</a>
           <a href="#process" onClick={(e) => { e.preventDefault(); scrollTo('process'); }} className="hover:text-accent transition-colors duration-300">Process</a>
@@ -230,12 +231,16 @@ const IntroOverlay = () => {
       ref={overlayRef}
       className="fixed inset-0 z-[9998] bg-accent flex items-center justify-center"
     >
-      <span
-        ref={textRef}
-        className="font-data text-background text-2xl md:text-3xl font-bold tracking-[0.35em] uppercase"
-      >
-        Apex Digital
-      </span>
+      <div ref={textRef} className="flex flex-col items-center gap-4">
+        <img
+          src={apexLogo}
+          alt="Apex Digital"
+          className="h-16 md:h-20 brightness-0"
+        />
+        <span className="font-data text-background text-sm md:text-base font-bold tracking-[0.35em] uppercase">
+          Apex Digital
+        </span>
+      </div>
     </div>
   );
 };
@@ -272,15 +277,16 @@ const Hero = () => {
 
   return (
     <section ref={containerRef} className="relative w-full min-h-[100dvh] flex items-center pt-24 md:pt-32 pb-24 px-8 md:px-16 overflow-hidden bg-background">
-      {/* Abstract dark texture background with scaling to allow parallax space */}
+      {/* Mountain peak background with parallax */}
       <div className="absolute inset-0 z-0 overflow-hidden bg-background">
         <img
           ref={bgImgRef}
-          src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=100&w=2560&auto=format&fit=crop"
-          alt="Sharp architectural geometric background"
-          className="relative -top-[10%] w-full h-[120%] object-cover opacity-30 mix-blend-luminosity origin-center"
+          src="/mountain.peak.avif"
+          alt="Mountain peak"
+          className="relative -top-[10%] w-full h-[120%] object-cover opacity-35 grayscale sepia-[0.3] origin-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/20"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-background to-transparent"></div>
       </div>
 
       <div className="hero-content relative z-10 flex flex-col items-start gap-6 max-w-4xl w-full">
@@ -878,7 +884,7 @@ const Footer = () => {
     <footer className="w-full border-t border-white/5 pt-16 pb-8 px-8 md:px-16 bg-background">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-12 mb-16">
         <div className="max-w-xs">
-          <h3 className="font-heading font-bold text-2xl tracking-tight text-white mb-4">Apex.Digital</h3>
+          <img src={apexLogo} alt="Apex Digital" className="h-10 mb-4" />
           <p className="font-data text-sm text-foreground/50 mb-6">
             Growth systems engineered for precision.
           </p>

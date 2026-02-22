@@ -348,7 +348,7 @@ const Problem = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative w-full py-20 md:py-40 px-8 bg-dark/20">
+    <section ref={sectionRef} className="relative w-full py-20 md:py-40 px-8 md:px-16 bg-dark/20">
       <div className="max-w-4xl mx-auto">
         <div ref={headingRef}>
           <div className="mask-wrapper block-mask drama-mask">
@@ -393,7 +393,7 @@ const StatsBanner = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="w-full py-16 md:py-24 px-8 bg-dark/20 border-y border-white/5">
+    <section ref={sectionRef} className="w-full py-16 md:py-24 px-8 md:px-16 bg-dark/20 border-y border-white/5">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
         {stats.map((stat, i) => (
           <div key={i} className="stat-item text-center md:text-left">
@@ -496,7 +496,7 @@ const Services = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="services" className="py-20 md:py-32 px-8 max-w-7xl mx-auto w-full" style={{ perspective: '1000px' }}>
+    <section ref={sectionRef} id="services" className="py-20 md:py-32 px-8 md:px-16 max-w-7xl mx-auto w-full" style={{ perspective: '1000px' }}>
       <div ref={headingRef}>
         <SectionHeading subtitle="01 // Capabilities">Architecture for scale</SectionHeading>
       </div>
@@ -608,7 +608,7 @@ const Process = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="process" className="py-20 md:py-32 px-8 w-full relative overflow-hidden">
+    <section ref={sectionRef} id="process" className="py-20 md:py-32 px-8 md:px-16 w-full relative overflow-hidden">
       <div ref={gradientRef} className="absolute inset-0 bg-gradient-to-b from-transparent via-dark/30 to-transparent pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto relative z-10" style={{ perspective: '1000px' }}>
@@ -705,7 +705,7 @@ const Portfolio = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="portfolio" className="py-20 md:py-32 px-8 max-w-7xl mx-auto w-full">
+    <section ref={sectionRef} id="portfolio" className="py-20 md:py-32 px-8 md:px-16 max-w-7xl mx-auto w-full">
       <div className="portfolio-heading-enter flex flex-col md:flex-row md:items-end justify-between mb-16 md:mb-24 gap-8">
         <div>
           <div className="font-data text-accent text-sm md:text-base uppercase tracking-widest mb-4">03 // Field Operations</div>
@@ -754,7 +754,7 @@ const Mission = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-20 md:py-32 px-8 bg-accent text-background overflow-hidden">
+    <section ref={sectionRef} className="py-20 md:py-32 px-8 md:px-16 bg-accent text-background overflow-hidden">
       <div className="max-w-5xl mx-auto">
         <div ref={labelRef} className="font-data text-background/60 text-sm uppercase tracking-widest mb-8">Our Mission</div>
         <p ref={quoteRef} className="font-drama italic text-3xl md:text-5xl leading-tight">
@@ -790,7 +790,7 @@ const About = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-20 md:py-32 px-8 max-w-7xl mx-auto w-full">
+    <section ref={sectionRef} className="py-20 md:py-32 px-8 md:px-16 max-w-7xl mx-auto w-full">
       <div ref={headingRef}>
         <SectionHeading subtitle="04 // The Directive">Built for small business scale.</SectionHeading>
       </div>
@@ -835,7 +835,7 @@ const Pricing = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="pricing" className="py-20 md:py-32 px-8 max-w-7xl mx-auto w-full">
+    <section ref={sectionRef} id="pricing" className="py-20 md:py-32 px-8 md:px-16 max-w-7xl mx-auto w-full">
       <div ref={headingRef}>
         <SectionHeading subtitle="05 // Investment">Transparent pricing.</SectionHeading>
       </div>
@@ -937,8 +937,8 @@ const FAQ = () => {
       answer: "Even better. We'll audit your current site, identify what's working and what's not, and rebuild it into a high-converting system. Your existing content and branding carry over — we just make everything perform better.",
     },
     {
-      question: "Can I update the site myself after launch?",
-      answer: "Absolutely. We build sites that are easy to maintain. We'll walk you through how to make basic updates, and our monthly maintenance plans cover anything beyond that.",
+      question: "What happens after my site launches?",
+      answer: "Your site needs ongoing care to stay fast, secure, and up to date. Our monthly maintenance plans starting at $50/month cover updates, performance monitoring, security patches, and content changes — so you can focus on running your business while we keep your site running at peak performance.",
     },
   ];
 
@@ -957,7 +957,7 @@ const FAQ = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="faq" className="py-20 md:py-32 px-8 max-w-7xl mx-auto w-full">
+    <section ref={sectionRef} id="faq" className="py-20 md:py-32 px-8 md:px-16 max-w-7xl mx-auto w-full">
       <div ref={headingRef}>
         <SectionHeading subtitle="06 // Common Questions">Everything you need to know.</SectionHeading>
       </div>
@@ -1000,7 +1000,7 @@ const CTABanner = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="cta" className="py-20 md:py-32 px-8 w-full mt-12 mb-24 max-w-7xl mx-auto">
+    <section ref={sectionRef} id="cta" className="py-20 md:py-32 px-8 md:px-16 w-full mt-12 mb-24 max-w-7xl mx-auto">
       <div className="border border-white/10 rounded-[3rem] p-8 md:p-16 lg:p-24 relative overflow-hidden bg-background">
         {/* Decorative circles — more visible, larger */}
         <div className="absolute inset-0 opacity-20 pointer-events-none">

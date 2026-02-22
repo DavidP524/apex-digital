@@ -346,14 +346,6 @@ const Hero = () => {
           <ChevronRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-12 left-8 md:left-16 flex flex-col items-center gap-4 z-10">
-        <span className="font-data text-xs tracking-widest text-foreground/40 uppercase rotate-90 translate-y-4">Scroll</span>
-        <div className="w-[1px] h-16 bg-gradient-to-b from-accent to-transparent relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full bg-background/50 animate-[slideDown_2s_infinite]"></div>
-        </div>
-      </div>
     </section>
   );
 };

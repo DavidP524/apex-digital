@@ -664,9 +664,9 @@ const PortfolioItem = ({ work }) => {
           className="relative w-full h-full object-contain scale-100 group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] grayscale group-hover:grayscale-0"
         />
       </div>
-      <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-background via-background/80 to-transparent z-30 pointer-events-none">
-        <div className="font-data text-xs text-accent uppercase tracking-widest mb-2">{work.tag}</div>
-        <h3 className="font-heading font-bold text-2xl">{work.client}</h3>
+      <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-background via-background to-background/40 z-30 pointer-events-none">
+        <div className="font-data text-xs text-accent uppercase tracking-widest mb-2 font-semibold">{work.tag}</div>
+        <h3 className="font-heading font-bold text-2xl text-foreground">{work.client}</h3>
       </div>
     </div>
   );

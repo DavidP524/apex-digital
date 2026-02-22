@@ -393,8 +393,8 @@ const StatsBanner = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="w-full py-16 md:py-24 px-8 md:px-16 bg-dark/20 border-y border-white/5">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+    <section ref={sectionRef} className="max-w-7xl mx-auto w-full py-16 md:py-24 px-8 md:px-16 bg-dark/20 border-y border-white/5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
         {stats.map((stat, i) => (
           <div key={i} className="stat-item text-center md:text-left">
             <div className="font-heading font-bold text-3xl md:text-4xl text-accent mb-2">{stat.value}</div>
@@ -608,10 +608,10 @@ const Process = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="process" className="py-20 md:py-32 px-8 md:px-16 w-full relative overflow-hidden">
+    <section ref={sectionRef} id="process" className="py-20 md:py-32 px-8 md:px-16 max-w-7xl mx-auto w-full relative overflow-hidden">
       <div ref={gradientRef} className="absolute inset-0 bg-gradient-to-b from-transparent via-dark/30 to-transparent pointer-events-none"></div>
 
-      <div className="max-w-7xl mx-auto relative z-10" style={{ perspective: '1000px' }}>
+      <div className="relative z-10" style={{ perspective: '1000px' }}>
         <div ref={headingRef}>
           <SectionHeading subtitle="02 // The Process">Stress-free deployment.</SectionHeading>
         </div>
@@ -1089,8 +1089,8 @@ const CTABanner = () => {
 // 9. FOOTER
 const Footer = () => {
   return (
-    <footer className="w-full border-t border-white/5 pt-16 pb-8 px-8 md:px-16 bg-background">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-12 mb-16">
+    <footer className="max-w-7xl mx-auto w-full border-t border-white/5 pt-16 pb-8 px-8 md:px-16 bg-background">
+      <div className="flex flex-col md:flex-row justify-between gap-12 mb-16">
         <div className="max-w-xs">
           <img src={apexLogo} alt="Apex Digital" className="h-10 mb-4" />
           <p className="font-data text-sm text-foreground/50 mb-6">
@@ -1116,7 +1116,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between font-data text-xs text-foreground/30">
+      <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between font-data text-xs text-foreground/30">
         <div>&copy; {new Date().getFullYear()} Apex Digital. All rights reserved.</div>
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}

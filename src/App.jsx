@@ -283,7 +283,7 @@ const Hero = () => {
           ref={bgImgRef}
           src="/mountain.peak.avif"
           alt="Mountain peak"
-          className="relative -top-[10%] w-full h-[120%] object-cover opacity-35 grayscale sepia-[0.3] origin-center"
+          className="relative -top-[10%] w-full h-[120%] object-cover opacity-25 grayscale sepia-[0.3] origin-center"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/20"></div>
         <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-background to-transparent"></div>

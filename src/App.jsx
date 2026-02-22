@@ -35,6 +35,40 @@ const CustomCursor = () => {
 
       const target = e.target;
 
+      // Determine background color brightness to decide cursor color
+      let parent = target;
+      let bgColor = window.getComputedStyle(document.body).backgroundColor;
+
+      while (parent && parent !== document.body) {
+        const style = window.getComputedStyle(parent);
+        const parentBg = style.backgroundColor;
+        if (parentBg && parentBg !== 'rgba(0, 0, 0, 0)') {
+          bgColor = parentBg;
+          break;
+        }
+        parent = parent.parentElement;
+      }
+
+      // Parse RGB and calculate brightness
+      const rgbMatch = bgColor.match(/\d+/g);
+      if (rgbMatch) {
+        const r = parseInt(rgbMatch[0]);
+        const g = parseInt(rgbMatch[1]);
+        const b = parseInt(rgbMatch[2]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+        // If background is light (brightness > 150), use black cursor; otherwise gold
+        if (brightness > 150) {
+          if (cursorRef.current) {
+            cursorRef.current.style.backgroundColor = '#000000';
+          }
+        } else {
+          if (cursorRef.current) {
+            cursorRef.current.style.backgroundColor = 'var(--accent)';
+          }
+        }
+      }
+
       if (
         target.closest('a') ||
         target.closest('button') ||

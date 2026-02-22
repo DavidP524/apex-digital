@@ -51,6 +51,12 @@ const CustomCursor = () => {
         parent = parent.parentElement;
       }
 
+      // Rotate gradient based on gold position — this creates the half-black-half-gold effect
+      const rotation = isOverGold ? '180deg' : '0deg';
+      if (cursorRef.current) {
+        cursorRef.current.style.backgroundImage = `conic-gradient(from ${rotation}, var(--accent) 0deg, var(--accent) 180deg, #000 180deg, #000 360deg)`;
+      }
+
       if (
         target.closest('a') ||
         target.closest('button') ||

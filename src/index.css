@@ -91,9 +91,8 @@
   transform: translate(-50%, -50%);
   transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    background-color 0.3s ease,
-    mix-blend-mode 0.3s ease;
-  mix-blend-mode: difference;
+    background-color 0.3s ease;
+  mix-blend-mode: normal;
 }
 
 .custom-cursor.hovering-link {
@@ -124,6 +123,11 @@
   letter-spacing: 0.1em;
 }
 
+/* Cursor turns black on gold background */
+.custom-cursor.over-gold {
+  background-color: #000;
+}
+
 /* Animation Masks */
 .mask-wrapper {
   overflow: hidden;
@@ -152,4 +156,11 @@
 /* Prevent iframe scroll from affecting parent page */
 iframe {
   contain: layout style paint;
+  overflow: hidden !important;
+}
+
+/* Darken cursor over gold background */
+[style*="bg-accent"] .custom-cursor,
+.bg-accent ~ .custom-cursor {
+  background-color: #000;
 }

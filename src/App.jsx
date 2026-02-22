@@ -34,6 +34,11 @@ const CustomCursor = () => {
       });
 
       const target = e.target;
+
+      // Check if cursor is over a gold background element
+      const isOverGold = target.closest('[style*="bg-accent"]') ||
+                         target.closest('.bg-accent');
+
       if (
         target.closest('a') ||
         target.closest('button') ||
@@ -44,7 +49,7 @@ const CustomCursor = () => {
       } else if (target.closest('.portfolio-item')) {
         setHoverState('hovering-portfolio');
       } else {
-        setHoverState('');
+        setHoverState(isOverGold ? 'over-gold' : '');
       }
     };
 
@@ -660,30 +665,16 @@ const Portfolio = () => {
       </div>
 
       <div className="portfolio-demo-enter max-w-6xl mx-auto">
-        <div className="rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl" style={{ pointerEvents: 'auto' }}>
+        <div className="rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl" style={{ pointerEvents: 'auto', contain: 'layout style paint' }}>
           <iframe
             ref={iframeRef}
             src="https://cell-clinic-mock-up.vercel.app/"
             title="Cell Clinic — Phone Repair Website"
             className="w-full bg-background"
-            style={{ height: '700px', display: 'block', border: 'none', pointerEvents: 'auto' }}
+            style={{ height: '700px', display: 'block', border: 'none', pointerEvents: 'auto', contain: 'layout style paint' }}
             allowFullScreen
-            onLoad={() => {
-              // Prevent scroll propagation from iframe to parent
-              const iframe = iframeRef.current;
-              if (iframe) {
-                try {
-                  iframe.contentWindow.addEventListener('wheel', (e) => {
-                    e.stopImmediatePropagation();
-                  }, true);
-                  iframe.contentWindow.addEventListener('scroll', (e) => {
-                    e.stopImmediatePropagation();
-                  }, true);
-                } catch (e) {
-                  // Cross-origin iframe — these event listeners won't work due to CORS
-                  // The CSS containment approach will handle this instead
-                }
-              }
+            onWheel={(e) => {
+              e.preventDefault();
             }}
           />
         </div>

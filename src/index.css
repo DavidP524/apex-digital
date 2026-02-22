@@ -148,3 +148,8 @@
 .tilt-content {
   transform: translateZ(40px);
 }
+
+/* Prevent iframe scroll from affecting parent page */
+iframe {
+  contain: layout style paint;
+}
